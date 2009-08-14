@@ -1,0 +1,10 @@
+ ** These tools are also available in RHEL4 **
+fdisk /dev/sdb
+pvcreate1 /dev/sdb1
+
+vgextend myvg /dev/sdb1
+vgdisplay myvg ( to get the free PE )
+lvextend -l+2559 /dev/myvg/mylv /dev/sdb1
+
+e2fsck -f /dev/myvg/mylv
+resize2fs /dev/myvg/mylv

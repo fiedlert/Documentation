@@ -1,0 +1,41 @@
+~/.bashrc
+Add the following function to convert unix time to human readable time. When searching history a unix timestamp is applied to each command
+
+	function timeconv
+	{
+	perl -e "print scalar(localtime(${1}))"
+	echo
+	}
+
+From a shell prompt run timeconv, this is the equivelant of the date command - the time is current. If you supply an unixtimestamp - it will e converted to human readable form.
+
+  	[root@yoradb4 ~]# timeconv 1208517660
+	Fri Apr 18 07:21:00 2008
+
+	
+~/.bash_profile
+Adding the following will 
+
+	* keep 1,000,000 line in the history file ( 500,000 commands +timestamps ). 
+	* keep the past 10,000 commands in memory. 
+ 	* Apply a timestamp to each command
+	* immediatly flush history to history file
+	* ignore ^d normally this will log you out, with this enabled, you will need to ^d^d.
+
+	HISTFILESIZE=1000000
+	HISTSIZE=10000
+	HISTTIMEFORMAT=
+
+	# Atomic history
+	export PROMPT_COMMAND='history -a'
+
+	# ignore ctrl-D
+	export IGNOREEOF=1
+
+	~/.inputrc
+	Adding these to your .inputrc will enable you to do incremental command history searching. ie type the first few letters of what your searching for and press up arrow or 	down arrow will yeild 	only previous commands which begin with that pattern.
+
+	"\e[A": history-search-backward
+	"\e[B": history-search-forward
+	"\e[C": forward-char
+	"\e[D": backward-char

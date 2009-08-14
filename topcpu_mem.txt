@@ -1,0 +1,9 @@
+top cpu
+
+	ps -eo user,pcpu,pid,cmd | sort -r -k2 | head -6
+
+
+top memory
+
+	ps -eo user,pmem,pid,cmd | sort -r -k2 | head -10
+

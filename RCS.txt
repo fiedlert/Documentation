@@ -1,0 +1,97 @@
+to use rcs for file version control a dir RCS should be in the directory for the files you want to put under version control
+
+mkdir RCS
+
+to add a file to rcs
+
+rcs -i somefile.txt
+
+# when prompted add a description of the file.
+
+[root@rlinux2 ~]# rcs -i somefile.txt
+RCS file: RCS/somefile.txt,v
+enter description, terminated with single '.' or end of file:
+NOTE: This is NOT the log message!
+>> this is a description
+>> .
+done
+
+checking the file in for the first time
+
+ci -u somefile.txt
+
+[root@rlinux2 ~]# ci -u somefile.txt
+RCS/somefile.txt,v  <--  somefile.txt
+initial revision: 1.1
+done
+
+	when making modifications to a file
+
+	co -l somefile.txt
+
+[root@rlinux2 ~]# co -l somefile.txt
+RCS/somefile.txt,v  -->  somefile.txt
+revision 1.1 (locked)
+done
+
+	# make your changes to the file...
+
+[root@rlinux2 ~]# ci -u somefile.txt
+RCS/somefile.txt,v  <--  somefile.txt
+new revision: 1.2; previous revision: 1.1
+enter log message, terminated with single '.' or end of file:
+>> updated for production.
+>> .
+done
+
+	to see a log of changes
+
+	rlog somefile.txt
+
+[root@rlinux2 ~]# rlog somefile.txt
+
+RCS file: RCS/somefile.txt,v
+Working file: somefile.txt
+head: 1.2
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 2;     selected revisions: 2
+description:
+this is a description
+----------------------------
+revision 1.2
+date: 2008/01/09 12:22:57;  author: root;  state: Exp;  lines: +1 -1
+updated for production.
+----------------------------
+revision 1.1
+date: 2008/01/09 12:21:17;  author: root;  state: Exp;
+Initial revision
+=============================================================================
+
+	to see changes between revisions
+
+	rcsdiff -r1.1 somefile.txt
+
+[root@rlinux2 ~]# rcsdiff -r1.1 somefile.txt
+===================================================================
+RCS file: RCS/somefile.txt,v
+retrieving revision 1.1
+diff -r1.1 somefile.txt
+1c1
+< dkadklajdklasjdaskljd
+---
+> some meaningful update...
+
+
+	to checkout a prior revision
+
+              	co -l -r1.1 somefile.txt
+
+[root@rlinux2 ~]# co -l -r1.1 somefile.txt
+RCS/somefile.txt,v  -->  somefile.txt
+revision 1.1 (locked)
+done
+

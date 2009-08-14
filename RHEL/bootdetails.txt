@@ -1,0 +1,45 @@
+to see details when booting there are two solutions
+
+Option 1. To see the traditional graphical boot
+
+edit /etc/init.d/functions
+
+search for rhgb-client
+
+you should find a block something similar to this ( its different between RHEL4/5 )
+
+# Inform the graphical boot of our current state
+update_boot_stage() {
+  if [ "$GRAPHICAL" = "yes" -a -x /usr/bin/rhgb-client ]; then
+    /usr/bin/rhgb-client --update="$1"
+  fi    
+  return 0
+} 
+
+change this line
+
+/usr/bin/rhgb-client --update="$1"
+
+to this
+
+/usr/bin/rhgb-client --update="$1" --details=yes
+
+
+option 2. To get a non graphical boot screen
+
+edit /boot/grub/grub.conf
+
+find the kernel you are booting to the block should look similar to
+
+title Red Hat Enterprise Linux AS (2.6.9-42.ELsmp)
+        root (hd0,0)
+        kernel /vmlinuz-2.6.9-42.ELsmp ro root=/dev/rootvg/rootlv rhgb quiet
+        initrd /initrd-2.6.9-42.ELsmp.img
+
+change this line 
+
+kernel /vmlinuz-2.6.9-42.ELsmp ro root=/dev/rootvg/rootlv rhgb quiet
+
+to this
+
+kernel /vmlinuz-2.6.9-42.ELsmp ro root=/dev/rootvg/rootlv quiet

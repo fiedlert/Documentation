@@ -1,0 +1,66 @@
+The following procedure will create 2 VNC service ports the first will be an 800x600 screen on port 5901 and the second will be a 1024x768 screen on port 5902.
+
+# make sure xinetd service is installed and running # It should be on for run levele 3/4/5
+chkconfig xinetd --list
+	xinetd         	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+
+	# if its not on run the following two commands
+
+	chkconfig xinetd on
+	service xinetd start
+
+	# If xinetd is not installed, install it
+	up2date install xinetd
+
+vi /etc/xinetd.d/vnc1024
+
+	service vnc1024
+	{
+	disable = no
+	socket_type = stream
+	protocol = tcp
+	wait = no
+	user = nobody
+	server = /usr/bin/Xvnc
+	server_args = -inetd -query SERVERNAME -geometry 1024x768 -depth 16 -once -fp unix/:7100 -securitytypes=none
+	}
+
+	vi /etc/xinetd.d/vnc800
+
+	service vnc800
+	{
+	disable = no
+	socket_type = stream
+	protocol = tcp
+	wait = no
+	user = nobody
+	server = /usr/bin/Xvnc
+	server_args = -inetd -query SERVERNAME -geometry 800x600 -depth 16 -once -fp unix/:7100 -securitytypes=none
+	}
+
+	## Assign the ports in the /etc/services file
+
+	vi /etc/services
+
+	vnc1024 5902/tcp   # VNC +gdm
+	vnc800  5901/tcp   # VNC +gdm
+
+	## Modify the gdm configuration
+	
+	vi /etc/X11/gdm/gdm.conf	
+
+	## Make sure the following line is uncommented under the daemon section # [daemon]
+
+	RemoteGreeter=/usr/bin/gdmlogin
+
+	## Make sure the following line is uncommented under the xdmcp section # [xdmcp]
+
+	Enable=true
+
+	## resart gdm
+
+	gdm-safe-restart 
+
+	## reload xinetd configuration
+
+	service xinetd restart
