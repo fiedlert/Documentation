@@ -1,0 +1,28 @@
+Initial setup - This only needs to be done once
+ensure screen is installed
+	
+[tfiedler@tardis ~]$ which screen
+/usr/bin/screen
+
+As root
+chmod +s /usr/bin/screen
+
+mkdir /var/run/screen
+
+chmod 0755 /var/run/screen
+
+groupadd -g 10001 screenguest
+
+useradd -u 10001 -g 10001 -d /home/screenguest -m screenguest
+
+passwd screenguest # Make up a password and share with the remote user
+Connecting user1
+screen
+
+# Press [ctrl]+a then type :multiuser on
+
+# Press [ctrl]+a then type :acladd screenguest
+Connecting user2
+login via ssh ( putty, etc... ) as screeguest using preshared password
+screen -x user1/ #( the / at the end is necessary )
+Both users will now share a common terminal
