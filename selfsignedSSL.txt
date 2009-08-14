@@ -1,0 +1,2 @@
+openssl genrsa -out test.key 1024
+openssl req -new -key test.key -x509 -out test.crt -days 10
