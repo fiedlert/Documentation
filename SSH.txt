@@ -1,0 +1,86 @@
+Using ssh-keys for single use commands w/o passwords
+
+cd ~/.ssh
+
+ssh-keygen -trsa -b2048 -f df
+<press enter for no password>
+
+chmod 0600 df*
+
+cd
+
+cat ~/.ssh/df.pub >> df.key
+
+df.key will look like:
+
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvsdlALoLc7tcZDdt2pyqm0zStKdQTSqXrA/mj/1MvVlqeAXMJ/CHqGCPm1TnVj4verUAhqtoeuMH6+5PowZdjyHbSdQUgmynLXZ/nuBmXXPGb2+gWa2SOAMQ95EO2mHomGMGb7y1FnrClxG/YXjHXTUK+fGX4MpT77m7P8HepNJhtK7KORP4ErHiwHVyOlB0NJWmr+W6QLF97w9yWIF+CC0RjTak84pnzP1nJbPncf/FNgeoozg9UwT2z6KkqHVfhY9WpDIRaPFXs8AnmNwXVcEQEGlp3bmFwyTuSQi/ncODQwheqOdcB4uj33IMpEv4Dn9U72xmReDgp4s3yL/Mew== tfiedler@toolbox
+
+add the following to the begining of the line
+
+command="hostname; df -h",no-port-forwarding,no-X11-forwarding,no-agent-forwarding 
+
+The file will look like this
+
+command="hostname; df -h",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvsdlALoLc7tcZDdt2pyqm0zStKdQTSqXrA/mj/1MvVlqeAXMJ/CHqGCPm1TnVj4verUAhqtoeuMH6+5PowZdjyHbSdQUgmynLXZ/nuBmXXPGb2+gWa2SOAMQ95EO2mHomGMGb7y1FnrClxG/YXjHXTUK+fGX4MpT77m7P8HepNJhtK7KORP4ErHiwHVyOlB0NJWmr+W6QLF97w9yWIF+CC0RjTak84pnzP1nJbPncf/FNgeoozg9UwT2z6KkqHVfhY9WpDIRaPFXs8AnmNwXVcEQEGlp3bmFwyTuSQi/ncODQwheqOdcB4uj33IMpEv4Dn9U72xmReDgp4s3yL/Mew== tfiedler@toolbox
+
+cat df.key | ssh rlinux2 'sh -c "cat - >>~/.ssh/authorized_keys"'
+
+vi ~/.ssh/config
+
+Host rlinux2-df
+User tfiedler
+IdentityFile /home/tfiedler/.ssh/df
+Hostname rlinux2.corp.ad.awiweb.com
+
+to run the command remotely just ssh to the the 'Host' portion of the configuration file.
+
+tfiedler@toolbox:~/code/Documentation$ ssh rlinux2-df
+rlinux2.corp.ad.awiweb.com
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda5             742M  615M   90M  88% /
+/dev/mapper/awioptvg-awioptlv
+                       29G   24G  3.4G  88% /awiopt
+/dev/sda1             244M   46M  186M  20% /boot
+none                  506M     0  506M   0% /dev/shm
+/dev/mapper/rootvg-homelv
+                      2.0G  1.8G  116M  94% /home
+/dev/mapper/rootvg-optlv
+                      485M   16M  445M   4% /opt
+/dev/mapper/rootvg-tmplv
+                     1008M   34M  924M   4% /tmp
+/dev/mapper/rootvg-usrlv
+                      5.3G  2.6G  2.5G  51% /usr
+/dev/mapper/rootvg-locallv
+                      485M   96M  364M  21% /usr/local
+/dev/mapper/rootvg-varlv
+                     1008M  472M  486M  50% /var
+/dev/mapper/awioptvg-rhel_lv
+                      3.0G  2.6G  290M  90% /awiopt/RHEL
+Connection to rlinux2.corp.ad.awiweb.com closed.
+tfiedler@toolbox:~/code/Documentation$ 
+
+To set up a host alias command 
+tfiedler@toolbox:~/code/Documentation$ alias rlinux2-df='ssh rlinux2-df'
+tfiedler@toolbox:~/code/Documentation$ rlinux2-df
+rlinux2.corp.ad.awiweb.com
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda5             742M  615M   90M  88% /
+/dev/mapper/awioptvg-awioptlv
+                       29G   24G  3.4G  88% /awiopt
+/dev/sda1             244M   46M  186M  20% /boot
+none                  506M     0  506M   0% /dev/shm
+/dev/mapper/rootvg-homelv
+                      2.0G  1.8G  116M  94% /home
+/dev/mapper/rootvg-optlv
+                      485M   16M  445M   4% /opt
+/dev/mapper/rootvg-tmplv
+                     1008M   34M  924M   4% /tmp
+/dev/mapper/rootvg-usrlv
+                      5.3G  2.6G  2.5G  51% /usr
+/dev/mapper/rootvg-locallv
+                      485M   96M  364M  21% /usr/local
+/dev/mapper/rootvg-varlv
+                     1008M  472M  486M  50% /var
+/dev/mapper/awioptvg-rhel_lv
+                      3.0G  2.6G  290M  90% /awiopt/RHEL
+Connection to rlinux2.corp.ad.awiweb.com closed.
